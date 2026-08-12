@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LexWidget — a word on your Home Screen, Lock Screen &amp; Apple Watch</title>
+<meta name="description" content="LexWidget puts a word on your Home Screen, Lock Screen, and Apple Watch and quietly grows your vocabulary. On-device, private by design. Data Not Collected.">
+<meta name="theme-color" content="#F5F4EF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161614" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LexWidget — learn a word every time you glance">
+<meta property="og:description" content="A word on your Home Screen, Lock Screen, and Apple Watch. On-device, private by design. Data Not Collected.">
+<meta property="og:url" content="https://hta-bot.github.io/lexwidget/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://hta-bot.github.io/lexwidget/">
+<style>
+  :root{
+    --paper:#F5F4EF; --ink:#151513; --mut:rgba(21,21,19,.62); --hair:rgba(21,21,19,.14); --card:#FFFDF7;
+    --red:#E8442C; --yellow:#F7B500; --blue:#2743C9; --green:#17934B; --pink:#EF5E9C;
+    --blk:#141412; --wht:#FFFDF7;
+    --hn:"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --paper:#161614; --ink:#F4F1E8; --mut:rgba(244,241,232,.62); --hair:rgba(244,241,232,.16); --card:#1F1F1C; }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--hn);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit}
+  img{max-width:100%}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  a:focus-visible,button:focus-visible{outline:3px solid var(--red);outline-offset:3px;border-radius:2px}
+  .skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--paper);padding:10px 16px;z-index:20;border-radius:0 0 10px 0}
+  .skip:focus{left:0}
+
+  /* nav */
+  nav{display:flex;align-items:center;gap:14px;padding:18px 0;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+  .icon{width:44px;height:44px;border-radius:11px;background:var(--yellow);display:grid;place-content:center;
+    font-weight:800;font-size:17px;letter-spacing:-.03em;color:var(--blk);line-height:.8;box-shadow:3px 3px 0 var(--blk)}
+  .icon .s{color:var(--red)}
+  .brand{font-weight:800;font-size:20px;letter-spacing:-.03em}
+  .navlinks{display:flex;align-items:center;gap:22px;margin-left:22px}
+  .navlinks a{font-family:var(--mono);font-size:12.5px;color:var(--mut);text-decoration:none}
+  .navlinks a:hover{color:var(--ink)}
+  .cta{margin-left:auto;font-weight:700;font-size:14px;background:var(--ink);color:var(--paper);
+    padding:11px 18px;border-radius:999px;text-decoration:none;white-space:nowrap}
+  @media (max-width:560px){ .navlinks{display:none} .cta{margin-left:auto} }
+
+  /* hero */
+  .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center;padding:70px 0 54px}
+  @media (max-width:820px){.hero{grid-template-columns:1fr;padding:44px 0 20px}}
+  .eyebrow{font-family:var(--mono);font-size:13px;color:var(--mut);margin-bottom:14px}
+  .hero h1{margin:0 0 18px;font-weight:800;font-size:clamp(42px,7vw,84px);letter-spacing:-.045em;line-height:.9;text-wrap:balance}
+  .hero .lede{margin:0 0 26px;font-size:19px;max-width:42ch;color:var(--mut)}
+  .getrow{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .badge{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:var(--paper);
+    text-decoration:none;font-weight:700;padding:13px 22px;border-radius:14px;font-size:15px}
+  .badge svg{flex:none}
+  .badge small{font-family:var(--mono);font-weight:400;font-size:11px;opacity:.72}
+  .reqs{font-family:var(--mono);font-size:12px;color:var(--mut)}
+
+  /* home-screen mock */
+  .homescreen{aspect-ratio:1/1;border-radius:34px;position:relative;
+    background:radial-gradient(130% 130% at 18% 0%, #3a5bd9 0%, #2743C9 46%, #16227a 100%);
+    display:grid;place-items:center;padding:26px;box-shadow:12px 12px 0 var(--blk),0 0 0 3px var(--hair)}
+  .mwidget{width:100%;max-width:340px;aspect-ratio:2.13/1;background:var(--blue);border-radius:22px;color:#fff;
+    padding:16px 18px;display:flex;flex-direction:column;justify-content:center;gap:3px;box-shadow:0 12px 34px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.06)}
+  .mwidget .g{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:rgba(255,255,255,.72)}
+  .mwidget .w{font-weight:800;font-size:29px;letter-spacing:-.04em;line-height:1;margin-top:3px}
+  .mwidget .w small{font-family:var(--mono);font-weight:400;font-size:11px;color:rgba(255,255,255,.72);letter-spacing:0}
+  .mwidget .d{font-size:13px;color:rgba(255,255,255,.9);margin-top:2px}
+  .mwidget .ex{font-size:12px;font-style:italic;color:rgba(255,255,255,.62)}
+  .dock{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:14px}
+  .dock i{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.16);display:block}
+  .dock i.app{background:var(--yellow)}
+
+  /* section heads */
+  section{scroll-margin-top:20px}
+  .slabel{font-family:var(--mono);font-size:12.5px;color:var(--mut);margin:82px 0 6px}
+  .stitle{margin:0 0 12px;font-weight:800;font-size:clamp(30px,4.4vw,56px);letter-spacing:-.04em;line-height:.98;text-wrap:balance}
+  .sintro{margin:0 0 30px;max-width:56ch;color:var(--mut);font-size:17px}
+
+  /* widget showcase */
+  .widgets{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-end}
+  .widgets figure{margin:0}
+  .widgets figcaption{font-family:var(--mono);font-size:12px;color:var(--mut);margin-top:14px}
+  .widgets figcaption b{color:var(--ink);font-weight:700;font-family:var(--hn);font-size:14px;letter-spacing:-.02em}
+  .w-sm{width:158px;height:158px;border-radius:30px;background:var(--card);color:var(--ink);padding:18px;
+    display:flex;flex-direction:column;justify-content:space-between;box-shadow:8px 8px 0 var(--blk);border:1px solid var(--hair)}
+  .w-sm .k{font-family:var(--mono);font-size:9.5px;color:var(--mut)}
+  .w-sm .word{font-weight:800;font-size:23px;letter-spacing:-.03em;line-height:1}
+  .w-sm .pr{font-family:var(--mono);font-size:9.5px;color:var(--mut);margin-top:6px}
+  .w-md{width:334px;max-width:100%;height:158px;border-radius:30px;background:var(--blue);color:#fff;padding:18px 22px;
+    display:flex;flex-direction:column;justify-content:space-between;box-shadow:8px 8px 0 var(--blk)}
+  .w-md .top{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;opacity:.72}
+  .w-md .word{font-weight:800;font-size:26px;letter-spacing:-.03em;line-height:1}
+  .w-md .word span{font-family:var(--mono);font-weight:400;font-size:11px;opacity:.72}
+  .w-md .d{font-size:12.5px;opacity:.85;margin-top:4px}
+  .w-md .ex{font-size:12px;opacity:.6;font-style:italic;margin-top:3px}
+  .w-lock{width:300px;max-width:100%;height:158px;border-radius:26px;background:#0E0E12;color:#F4F1E8;padding:16px 18px;
+    display:flex;flex-direction:column;justify-content:center;box-shadow:8px 8px 0 var(--blk)}
+  .w-lock .glass{border-radius:18px;padding:12px 14px;background:rgba(244,241,232,.1);border:1px solid rgba(244,241,232,.14)}
+  .w-lock .lk{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;opacity:.62}
+  .w-lock .word{font-weight:800;font-size:24px;letter-spacing:-.03em;margin:5px 0 3px}
+  .w-lock .d{font-size:11.5px;opacity:.72;line-height:1.35}
+  .w-sb{width:250px;height:126px;border-radius:18px;background:var(--blk);color:var(--red);padding:16px 20px;
+    display:flex;flex-direction:column;justify-content:center;box-shadow:8px 8px 0 rgba(20,20,18,.4)}
+  .w-sb .word{font-weight:800;font-size:26px;letter-spacing:-.03em;line-height:1}
+  .w-sb .pr{font-family:var(--mono);font-size:10px;opacity:.72;margin-top:8px}
+
+  /* features */
+  .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:8px}
+  .feat{border-radius:22px;padding:24px 22px;color:#fff;min-height:200px;display:flex;flex-direction:column;
+    box-shadow:7px 7px 0 var(--blk)}
+  .feat.b{background:var(--blue)} .feat.r{background:var(--red)} .feat.g{background:var(--green)}
+  .feat.p{background:var(--pink);color:var(--blk)} .feat.y{background:var(--yellow);color:var(--blk)}
+  .feat .k{font-family:var(--mono);font-size:11.5px;opacity:.82}
+  .feat h3{margin:8px 0 8px;font-weight:800;font-size:23px;letter-spacing:-.03em;line-height:1.02}
+  .feat p{margin:0;font-size:14px;line-height:1.45;opacity:.94}
+
+  /* screenshot gallery */
+  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px}
+  @media (max-width:1000px){.gallery{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:640px){.gallery{grid-template-columns:1fr}}
+  .frame{position:relative;overflow:hidden;border-radius:26px;height:660px;padding:30px 26px 0;
+    box-shadow:7px 7px 0 var(--blk)}
+  .frame.f-yellow{background:var(--yellow);color:var(--blk)}
+  .frame.f-blue{background:var(--blue);color:#fff}
+  .frame.f-green{background:var(--green);color:#fff}
+  .frame.f-pink{background:var(--pink);color:var(--blk)}
+  .frame.f-red{background:var(--red);color:#fff}
+  .frame.f-black{background:var(--blk);color:#fff}
+  .frame .eb{font-family:var(--mono);font-size:12px;opacity:.82;letter-spacing:.02em}
+  .frame h3{margin:6px 0 8px;font-weight:800;font-size:clamp(24px,2.4vw,30px);letter-spacing:-.035em;line-height:.98}
+  .frame .sub{margin:0;font-size:13px;line-height:1.45;opacity:.9;max-width:30ch}
+  .dev{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%)}
+
+  /* iPhone device */
+  .phone{width:200px;height:412px;border-radius:40px;background:#0C0C0F;padding:8px;
+    box-shadow:0 22px 44px rgba(0,0,0,.4),0 0 0 2px rgba(0,0,0,.35)}
+  .phone .screen{width:100%;height:100%;border-radius:33px;overflow:hidden;background:var(--paper2,#F5F4EF);
+    color:#151513;position:relative;font-size:12px}
+  .phone .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:74px;height:20px;
+    background:#0C0C0F;border-radius:12px;z-index:3}
+  .sc-pad{padding:34px 16px 0}
+  .sc-status{position:absolute;top:11px;left:18px;font-family:var(--mono);font-size:9.5px;font-weight:600;color:#151513;z-index:2}
+  .sc-batt{position:absolute;top:11px;right:16px;font-family:var(--mono);font-size:9px;color:#151513;z-index:2;opacity:.7}
+  .darkscreen{--paper2:#101014}
+  .darkscreen .screen{color:#F4F1E8}
+  .darkscreen .sc-status,.darkscreen .sc-batt{color:#F4F1E8}
+
+  /* app screen bits */
+  .ap-h{font-weight:800;font-size:20px;letter-spacing:-.04em}
+  .ap-sub{font-family:var(--mono);font-size:9px;color:rgba(21,21,19,.55)}
+  .ap-search{margin-top:10px;border-bottom:2px solid #151513;padding-bottom:6px;font-size:13px;color:rgba(21,21,19,.5)}
+  .ap-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:9px 0;border-bottom:1px solid rgba(21,21,19,.14)}
+  .ap-row .wd{font-weight:800;font-size:15px;letter-spacing:-.03em}
+  .ap-row .po{font-family:var(--mono);font-size:8px;color:rgba(21,21,19,.5);margin-left:5px}
+  .ap-row .gl{font-size:10px;color:rgba(21,21,19,.55);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px}
+  .ap-row .mt{font-family:var(--mono);font-size:8px;color:rgba(21,21,19,.5);white-space:nowrap;text-align:right}
+  .ap-fab{position:absolute;right:16px;bottom:18px;width:52px;height:52px;border-radius:50%;background:var(--yellow);
+    color:var(--blk);display:grid;place-content:center;font-size:30px;font-weight:500;box-shadow:0 8px 18px rgba(0,0,0,.25)}
+  /* detail (blue full-bleed) */
+  .det{position:absolute;inset:0;background:var(--blue);color:#fff;padding:44px 20px 0}
+  .det .word{font-weight:800;font-size:38px;letter-spacing:-.045em;line-height:.92}
+  .det .pron{font-family:var(--mono);font-size:11px;opacity:.8;margin-top:10px}
+  .det .def{font-size:14px;line-height:1.35;margin-top:14px}
+  .det .ex{font-size:12px;font-style:italic;opacity:.72;margin-top:12px}
+  .det .seen{position:absolute;right:14px;bottom:84px;background:var(--yellow);color:var(--blk);font-weight:800;
+    font-size:11px;padding:7px 11px;transform:rotate(-7deg);text-align:center;line-height:1.05;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
+  .det .acts{position:absolute;left:20px;right:20px;bottom:22px;display:flex;gap:10px}
+  .det .acts button{flex:1;border:none;font-family:var(--hn);font-weight:700;font-size:12px;padding:10px 0;border-radius:10px}
+  .det .acts .pri{background:#fff;color:var(--blue)}
+  .det .acts .sec{background:rgba(255,255,255,.16);color:#fff}
+  /* autofill form */
+  .fm-t{font-family:var(--mono);font-size:9px;color:rgba(21,21,19,.5)}
+  .fm-l{font-family:var(--mono);font-size:8.5px;color:rgba(21,21,19,.5);margin-top:12px}
+  .fm-word{font-weight:800;font-size:24px;letter-spacing:-.03em;border-bottom:3px solid var(--green);padding-bottom:5px}
+  .fm-fill{font-size:12px;line-height:1.35;border-bottom:1px solid rgba(21,21,19,.2);padding:3px 0 7px}
+  .fm-chip{display:inline-flex;align-items:center;gap:5px;margin-top:12px;background:var(--green);color:#fff;
+    font-family:var(--mono);font-size:8.5px;padding:4px 9px;border-radius:999px}
+  .fm-save{position:absolute;left:16px;right:16px;bottom:20px;background:var(--green);color:#fff;text-align:center;
+    font-weight:700;font-size:13px;padding:11px 0;border-radius:11px}
+  /* decks */
+  .dk{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid rgba(21,21,19,.14)}
+  .dk .sw{width:26px;height:26px;border-radius:8px;flex:none}
+  .dk .nm{font-weight:800;font-size:14px;letter-spacing:-.02em}
+  .dk .ct{font-family:var(--mono);font-size:8.5px;color:rgba(21,21,19,.5)}
+  .dk .st{margin-left:auto;font-size:14px}
+  /* paywall */
+  .pw{position:absolute;inset:0;background:var(--blk);color:#fff;padding:40px 20px 0;text-align:center}
+  .pw .mark{font-size:30px;font-weight:800;color:var(--yellow);letter-spacing:-.04em}
+  .pw .mark .s{color:var(--red)}
+  .pw h4{margin:14px 0 4px;font-weight:800;font-size:20px;letter-spacing:-.03em}
+  .pw .price{font-family:var(--mono);font-size:11px;color:rgba(244,241,232,.7)}
+  .pw ul{list-style:none;margin:16px 0 0;padding:0;text-align:left;font-size:12px;line-height:1.9}
+  .pw li::before{content:"◆";color:var(--yellow);margin-right:8px;font-size:10px}
+  .pw .buy{position:absolute;left:20px;right:20px;bottom:22px;background:var(--yellow);color:var(--blk);
+    font-weight:800;font-size:13px;padding:12px 0;border-radius:12px}
+  /* watch device */
+  .watch{width:172px;height:210px;border-radius:46px;background:var(--blue);color:#fff;padding:24px 20px;
+    box-shadow:0 0 0 5px #2c2c2a,0 0 0 8px #3a3a38,0 20px 40px rgba(0,0,0,.4)}
+  .watch .wt{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;opacity:.82}
+  .watch .word{font-weight:800;font-size:31px;letter-spacing:-.045em;line-height:.94;margin-top:24px}
+  .watch .pron{font-family:var(--mono);font-size:9.5px;opacity:.85;margin-top:7px}
+  .watch .def{font-size:11px;line-height:1.35;opacity:.9;margin-top:9px}
+
+  /* privacy band */
+  .privacy{margin-top:82px;background:var(--blk);color:var(--wht);border-radius:26px;padding:52px 34px}
+  .privacy h2{margin:0 0 8px;font-weight:800;font-size:clamp(32px,4.6vw,58px);letter-spacing:-.04em;line-height:.98}
+  .privacy .y{color:var(--yellow)}
+  .privacy p{margin:14px 0 0;max-width:62ch;color:rgba(255,253,247,.82);font-size:16px}
+  .plist{display:flex;gap:28px;flex-wrap:wrap;margin-top:26px;font-family:var(--mono);font-size:12.5px;color:rgba(255,253,247,.7)}
+  .plist span{display:flex;gap:8px;align-items:center}.plist b{color:var(--yellow)}
+  .plist a{color:var(--yellow);text-decoration:none;font-weight:600}
+  .plist a:hover{text-decoration:underline}
+
+  /* pricing */
+  .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px}
+  @media (max-width:640px){.price-grid{grid-template-columns:1fr}}
+  .tier{border:2px solid var(--ink);border-radius:22px;padding:28px 26px;background:var(--card)}
+  .tier.pro{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .tier .t{font-family:var(--mono);font-size:12px;opacity:.72}
+  .tier .amt{font-weight:800;font-size:38px;letter-spacing:-.03em;margin:6px 0 4px}
+  .tier .amt small{font-family:var(--mono);font-weight:400;font-size:13px;opacity:.6;letter-spacing:0}
+  .tier ul{margin:14px 0 0;padding:0;list-style:none;font-size:14.5px;line-height:1.95}
+  .tier li::before{content:"◆";color:var(--red);margin-right:9px;font-size:12px}
+  .tier.pro li::before{color:var(--yellow)}
+  .tier .note{font-family:var(--mono);font-size:11px;opacity:.6;margin-top:16px}
+
+  /* faq */
+  .faq{margin-top:8px;border-top:2px solid var(--ink)}
+  .faq details{border-bottom:2px solid var(--hair)}
+  .faq summary{list-style:none;cursor:pointer;padding:20px 2px;font-weight:800;font-size:18px;letter-spacing:-.02em;
+    display:flex;justify-content:space-between;align-items:center;gap:16px}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"+";font-weight:500;font-size:24px;color:var(--red);flex:none;transition:transform .2s}
+  .faq details[open] summary::after{content:"–"}
+  .faq p{margin:0 2px 20px;color:var(--mut);font-size:15px;max-width:64ch}
+
+  footer{margin-top:78px;border-top:2px solid var(--ink);padding:34px 0 60px;
+    display:flex;gap:20px;flex-wrap:wrap;align-items:center;font-family:var(--mono);font-size:12.5px;color:var(--mut)}
+  footer a{text-decoration:none;text-underline-offset:3px}
+  footer a:hover{text-decoration:underline;text-decoration-color:var(--red)}
+  footer .fbrand{font-family:var(--hn);font-weight:800;font-size:14px;letter-spacing:-.02em;color:var(--ink)}
+  footer .sp{margin-left:auto}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="wrap">
+
+  <nav aria-label="Primary">
+    <div class="icon" aria-hidden="true">lex<span class="s">✱</span></div>
+    <span class="brand">LexWidget</span>
+    <div class="navlinks">
+      <a href="#widget">Widgets</a>
+      <a href="#features">Features</a>
+      <a href="#screens">Screens</a>
+      <a href="#privacy">Privacy</a>
+    </div>
+    <!-- App Store link: replace href="#get" with the real URL once approved and drop the "coming soon" small. -->
+    <a class="cta" href="#get">Get LexWidget</a>
+  </nav>
+
+  <main id="main">
+
+  <section class="hero" aria-labelledby="h1">
+    <div>
+      <p class="eyebrow">vocabulary · iOS &amp; Apple Watch</p>
+      <h1 id="h1">Learn a word every time you glance.</h1>
+      <p class="lede">LexWidget puts a word on your Home Screen, Lock Screen, and Apple Watch. Add words once — a smart
+        rotation keeps them in front of you until they stick.</p>
+      <div class="getrow">
+        <!-- App Store badge — "coming soon" until the app is approved. Swap href + remove <small> to go live. -->
+        <a class="badge" id="get" href="#get" aria-label="Download on the App Store — coming soon">
+          <svg width="20" height="24" viewBox="0 0 20 24" fill="currentColor" aria-hidden="true"><path d="M14.94 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.48.83-.72 0-1.82-.81-3-.79-1.54.02-2.96.9-3.75 2.28-1.6 2.78-.41 6.9 1.15 9.16.76 1.11 1.67 2.35 2.86 2.31 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.13 2.76-2.25.87-1.29 1.23-2.54 1.25-2.6-.03-.02-2.4-.92-2.42-3.65zM12.7 5.66c.64-.78 1.07-1.85.95-2.93-.92.04-2.03.61-2.69 1.38-.59.68-1.11 1.78-.97 2.83 1.03.08 2.07-.52 2.71-1.28z"/></svg>
+          Download on the App&nbsp;Store <small>coming soon</small>
+        </a>
+        <span class="reqs">iOS 17 · watchOS 10 · free to try</span>
+      </div>
+    </div>
+    <div class="homescreen" role="img" aria-label="An iPhone Home Screen showing the LexWidget medium widget: the word pellucid with its pronunciation and definition.">
+      <div class="mwidget" aria-hidden="true">
+        <div class="g"><span>words · p</span><span>seen 3×</span></div>
+        <div class="w">pellucid <small>adj. · /pəˈlusɪd/</small></div>
+        <div class="d">translucently clear; lucid in style or meaning</div>
+        <div class="ex">“The lake was so pellucid we counted the stones.”</div>
+      </div>
+      <div class="dock" aria-hidden="true"><i class="app"></i><i></i><i></i><i></i></div>
+    </div>
+  </section>
+
+  <!-- WIDGET IS THE PRODUCT -->
+  <section id="widget" aria-labelledby="widget-t">
+    <p class="slabel">the widget is the product</p>
+    <h2 class="stitle" id="widget-t">Everywhere you already look.</h2>
+    <p class="sintro">Home Screen, Lock Screen, StandBy, and the Smart Stack — every size of the same idea.
+      A smart rotation favours the words you’ve seen least, so nothing goes stale. Tap any widget to open its full entry.</p>
+    <div class="widgets" role="list">
+      <figure role="listitem">
+        <div class="w-sm" aria-hidden="true">
+          <div class="k">words</div>
+          <div><div class="word">limerence</div><div class="pr">(li·mə·rəns)</div></div>
+        </div>
+        <figcaption><b>Home · small</b><br>word + pronunciation</figcaption>
+      </figure>
+      <figure role="listitem">
+        <div class="w-md" aria-hidden="true">
+          <div class="top"><span>words · o</span><span>seen 5×</span></div>
+          <div><div class="word">obviate <span>verb</span></div>
+          <div class="d">to remove a need or difficulty; anticipate and prevent</div>
+          <div class="ex">“a clear brief obviates a second round.”</div></div>
+        </div>
+        <figcaption><b>Home · medium</b><br>definition + example</figcaption>
+      </figure>
+      <figure role="listitem">
+        <div class="w-lock" aria-hidden="true">
+          <div class="glass">
+            <div class="lk"><span>words · p</span><span>3 of 6</span></div>
+            <div class="word">pellucid</div>
+            <div class="d">translucently clear; lucid in style or meaning</div>
+          </div>
+        </div>
+        <figcaption><b>Lock Screen</b><br>on the real system glass</figcaption>
+      </figure>
+      <figure role="listitem">
+        <div class="w-sb" aria-hidden="true">
+          <div class="word">perspicacious</div>
+          <div class="pr">(pər·spə·kay·shəs) · adj</div>
+        </div>
+        <figcaption><b>StandBy · night</b><br>red-on-black, glanceable</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- FEATURE GRID -->
+  <section id="features" aria-labelledby="feat-t">
+    <p class="slabel">what it does</p>
+    <h2 class="stitle" id="feat-t">Built to make words stick.</h2>
+    <div class="features">
+      <div class="feat b"><div class="k">home · lock · standby</div><h3>Widgets everywhere</h3>
+        <p>Every widget size, plus Apple Watch complications and the Smart Stack. A smart rotation favours the words you’ve seen least.</p></div>
+      <div class="feat g"><div class="k">on-device</div><h3>Auto-fill entries</h3>
+        <p>Type a word; fill its definition, part of speech, and IPA pronunciation from a bundled dictionary — no network.</p></div>
+      <div class="feat p"><div class="k">organize</div><h3>Colour-coded decks</h3>
+        <p>Group words into decks, give each a pop colour, point a widget at one, and focus the decks that matter.</p></div>
+      <div class="feat r"><div class="k">wrist</div><h3>On your Apple Watch</h3>
+        <p>The current word on your watch face and Smart Stack, synced quietly through your own iCloud.</p></div>
+      <div class="feat y"><div class="k">capture</div><h3>Add words fast</h3>
+        <p>Paste a list, import from CSV / Excel / PDF, or share text from any app straight into a new word.</p></div>
+      <div class="feat b"><div class="k">extras</div><h3>Hear &amp; export</h3>
+        <p>Hear any word spoken aloud, and export your whole library to CSV or JSON whenever you like.</p></div>
+    </div>
+  </section>
+
+  <!-- SCREENSHOT GALLERY -->
+  <section id="screens" aria-labelledby="screens-t">
+    <p class="slabel">a look inside</p>
+    <h2 class="stitle" id="screens-t">Six screens, one idea.</h2>
+    <p class="sintro">The app is one glance deep — a lexicon you can build fast and read anywhere.</p>
+    <div class="gallery">
+
+      <!-- 1 · Home -->
+      <figure class="frame f-yellow">
+        <p class="eb">your lexicon</p>
+        <h3>A whole lexicon,<br>one screen deep.</h3>
+        <p class="sub">Every word with its pronunciation, part of speech, and how often you’ve seen it.</p>
+        <div class="dev" aria-hidden="true">
+          <div class="phone"><div class="screen">
+            <div class="notch"></div><div class="sc-status">10:09</div><div class="sc-batt">100%</div>
+            <div class="sc-pad">
+              <div class="ap-h">words</div>
+              <div class="ap-sub">6 active · 1 known</div>
+              <div class="ap-search">search your words</div>
+              <div class="ap-row"><div><span class="wd">ineluctable</span><span class="po">adj</span><div class="gl">unable to be resisted or avoided</div></div><div class="mt">(i·nə·luk·)<br>seen 2×</div></div>
+              <div class="ap-row"><div><span class="wd">limerence</span><span class="po">noun</span><div class="gl">involuntary infatuation</div></div><div class="mt">(li·mə·rəns)<br>seen 1×</div></div>
+              <div class="ap-row"><div><span class="wd">pellucid</span><span class="po">adj</span><div class="gl">translucently clear; lucid</div></div><div class="mt">(pə·loo·sid)<br>seen 3×</div></div>
+              <div class="ap-row"><div><span class="wd">perspicacious</span><span class="po">adj</span><div class="gl">having keen insight</div></div><div class="mt">(pər·spə·)<br>seen 4×</div></div>
+            </div>
+            <div class="ap-fab">+</div>
+          </div></div>
+        </div>
+      </figure>
+
+      <!-- 2 · Detail -->
+      <figure class="frame f-blue">
+        <p class="eb">the entry</p>
+        <h3>Every word,<br>up close.</h3>
+        <p class="sub">Definition and example — tap to hear it, or pin it as a favourite.</p>
+        <div class="dev" aria-hidden="true">
+          <div class="phone"><div class="screen">
+            <div class="notch"></div>
+            <div class="det">
+              <div class="seen">seen<br>3×</div>
+              <div class="word">pellucid</div>
+              <div class="pron">/pəˈlusɪd/ · adjective</div>
+              <div class="def">translucently clear; lucid in style or meaning.</div>
+              <div class="ex">“The lake was so pellucid we counted the stones.”</div>
+              <div class="acts"><button class="pri">◗ Hear it</button><button class="sec">★ Pin</button></div>
+            </div>
+          </div></div>
+        </div>
+      </figure>
+
+      <!-- 3 · Auto-fill -->
+      <figure class="frame f-green">
+        <p class="eb">on-device auto-fill</p>
+        <h3>Add a word.<br>We fill the rest.</h3>
+        <p class="sub">Definition, part of speech, and IPA — from a bundled dictionary, no network.</p>
+        <div class="dev" aria-hidden="true">
+          <div class="phone"><div class="screen">
+            <div class="notch"></div><div class="sc-status">10:09</div><div class="sc-batt">100%</div>
+            <div class="sc-pad">
+              <div class="fm-t">new entry</div>
+              <div class="fm-l">word</div>
+              <div class="fm-word">ineluctable</div>
+              <div class="fm-l">definition</div>
+              <div class="fm-fill">unable to be resisted or avoided; inescapable</div>
+              <div class="fm-l">part of speech · pronunciation</div>
+              <div class="fm-fill">adjective · /ˌɪnɪˈlʌktəb(ə)l/</div>
+              <div class="fm-chip">✱ filled on-device</div>
+            </div>
+            <div class="fm-save">Save word</div>
+          </div></div>
+        </div>
+      </figure>
+
+      <!-- 4 · Decks -->
+      <figure class="frame f-pink">
+        <p class="eb">decks</p>
+        <h3>Colour-code decks.<br>Focus favourites.</h3>
+        <p class="sub">Give each deck a pop colour, point a widget at it, and star the ones you want more.</p>
+        <div class="dev" aria-hidden="true">
+          <div class="phone"><div class="screen">
+            <div class="notch"></div><div class="sc-status">10:09</div><div class="sc-batt">100%</div>
+            <div class="sc-pad">
+              <div class="ap-h">decks</div>
+              <div class="ap-sub">4 decks · 128 words</div>
+              <div style="margin-top:12px">
+                <div class="dk"><span class="sw" style="background:#2743C9"></span><div><div class="nm">words</div><div class="ct">42 words</div></div><span class="st">★</span></div>
+                <div class="dk"><span class="sw" style="background:#E8442C"></span><div><div class="nm">GRE prep</div><div class="ct">36 words</div></div><span class="st">★</span></div>
+                <div class="dk"><span class="sw" style="background:#F7B500"></span><div><div class="nm">from books</div><div class="ct">31 words</div></div><span class="st" style="opacity:.3">☆</span></div>
+                <div class="dk"><span class="sw" style="background:#17934B"></span><div><div class="nm">Latin roots</div><div class="ct">19 words</div></div><span class="st" style="opacity:.3">☆</span></div>
+              </div>
+            </div>
+            <div class="ap-fab">+</div>
+          </div></div>
+        </div>
+      </figure>
+
+      <!-- 5 · Apple Watch -->
+      <figure class="frame f-red">
+        <p class="eb">apple watch</p>
+        <h3>On your<br>wrist, too.</h3>
+        <p class="sub">The current word on your watch face and Smart Stack, synced over iCloud.</p>
+        <div class="dev" aria-hidden="true" style="bottom:44px">
+          <div class="watch">
+            <div class="wt"><span>words · p</span><span>10:09</span></div>
+            <div class="word">pellucid</div>
+            <div class="pron">/pəˈlusɪd/ · adj.</div>
+            <div class="def">translucently clear; lucid in style or meaning</div>
+          </div>
+        </div>
+      </figure>
+
+      <!-- 6 · Pro -->
+      <figure class="frame f-black">
+        <p class="eb">one-time unlock</p>
+        <h3>No subscription.<br>No server.</h3>
+        <p class="sub">Free for 30 words and one deck. One $4.99 unlock opens everything — forever.</p>
+        <div class="dev" aria-hidden="true">
+          <div class="phone"><div class="screen">
+            <div class="notch"></div>
+            <div class="pw">
+              <div class="mark">lex<span class="s">✱</span> Pro</div>
+              <h4>Unlock everything</h4>
+              <div class="price">one-time · $4.99 · no subscription</div>
+              <ul>
+                <li>Unlimited words &amp; decks</li>
+                <li>Auto-fill, hear-it &amp; export</li>
+                <li>File import &amp; per-deck widgets</li>
+                <li>Apple Watch app &amp; all themes</li>
+              </ul>
+              <div class="buy">Unlock — $4.99</div>
+            </div>
+          </div></div>
+        </div>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- PRIVACY -->
+  <section id="privacy" class="privacy" aria-labelledby="priv-t">
+    <h2 id="priv-t">Data not collected<span class="y">.</span></h2>
+    <p>Everything you add is processed on your device and synced through your own iCloud. There is no LexWidget
+      server, no account, and no analytics. The App Store privacy label says “Data Not Collected” — and we mean it.</p>
+    <div class="plist">
+      <span><b>◆</b> on-device + iCloud sync</span>
+      <span><b>◆</b> no accounts</span>
+      <span><b>◆</b> no trackers or ads</span>
+      <span><a href="privacy.html">read the policy →</a></span>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" aria-labelledby="price-t">
+    <p class="slabel">pricing</p>
+    <h2 class="stitle" id="price-t">One-time. No subscription.</h2>
+    <p class="sintro">Try it free. When you’re ready for the whole thing, it’s a single purchase you own forever.</p>
+    <div class="price-grid">
+      <div class="tier">
+        <div class="t">free</div>
+        <div class="amt">$0</div>
+        <ul>
+          <li>Up to 30 words, 1 deck</li>
+          <li>All Home &amp; Lock Screen widget sizes</li>
+          <li>Type &amp; paste to add words</li>
+          <li>Light, dark &amp; system themes</li>
+        </ul>
+        <div class="note">no account · nothing collected</div>
+      </div>
+      <div class="tier pro">
+        <div class="t">pro — one-time unlock</div>
+        <div class="amt">$4.99 <small>once</small></div>
+        <ul>
+          <li>Unlimited words &amp; decks</li>
+          <li>On-device auto-fill, hear-it &amp; export</li>
+          <li>Import CSV / Excel / PDF &amp; per-deck widgets</li>
+          <li>Apple Watch app &amp; all widget themes</li>
+        </ul>
+        <div class="note">buy once, keep forever · no subscription</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" aria-labelledby="faq-t">
+    <p class="slabel">questions</p>
+    <h2 class="stitle" id="faq-t">Good to know.</h2>
+    <div class="faq">
+      <details>
+        <summary>Is there a subscription?</summary>
+        <p>No. LexWidget is free for up to 30 words and one deck. Everything else is a single one-time
+          purchase of $4.99 — no subscription, ever. You buy it once and keep it.</p>
+      </details>
+      <details>
+        <summary>How does it sync across my devices?</summary>
+        <p>Through your own iCloud. Your words move between your iPhone and Apple Watch automatically — quietly,
+          and without any LexWidget account or server in the middle.</p>
+      </details>
+      <details>
+        <summary>Is there an Apple Watch app?</summary>
+        <p>Yes. Your current word appears on the watch face and in the Smart Stack, with complications in every
+          shape. The full Watch app is part of the Pro unlock.</p>
+      </details>
+      <details>
+        <summary>What data do you collect?</summary>
+        <p>None. There’s no account, no analytics, and no trackers. Auto-fill runs from a bundled dictionary on
+          your device — nothing you add ever leaves it except through your own iCloud. Read the
+          <a href="privacy.html">privacy policy</a> for the details.</p>
+      </details>
+      <details>
+        <summary>Which devices does it need?</summary>
+        <p>iPhone on iOS 17 or later, and Apple Watch on watchOS 10 or later.</p>
+      </details>
+    </div>
+  </section>
+
+  </main>
+
+  <footer>
+    <span class="fbrand">LexWidget<span style="color:var(--red)">✱</span></span>
+    <a href="privacy.html">Privacy</a>
+    <a href="https://github.com/HTA-bot/lexwidget/issues">Support</a>
+    <span class="sp">© 2026 LexWidget · Data Not Collected</span>
+  </footer>
+
+</div>
+</body>
+</html>
