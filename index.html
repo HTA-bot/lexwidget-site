@@ -240,6 +240,21 @@
   .faq details[open] summary::after{content:"–"}
   .faq p{margin:0 2px 20px;color:var(--mut);font-size:15px;max-width:64ch}
 
+  /* import */
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:8px}
+  .step{border:2px solid var(--ink);border-radius:22px;padding:24px 22px;background:var(--card)}
+  .step .n{font-family:var(--mono);font-size:11.5px;color:var(--mut);margin:0}
+  .step h3{margin:8px 0 8px;font-weight:800;font-size:21px;letter-spacing:-.03em;line-height:1.04}
+  .step p{margin:0;font-size:14px;line-height:1.45;color:var(--mut)}
+  .tip{margin-top:18px;background:var(--blk);color:var(--wht);border-radius:26px;padding:34px 32px}
+  .tip .k{font-family:var(--mono);font-size:11.5px;color:var(--yellow);margin:0}
+  .tip h3{margin:8px 0 18px;font-weight:800;font-size:clamp(22px,2.6vw,28px);letter-spacing:-.035em;line-height:1}
+  .tiptable{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px;margin-bottom:20px}
+  .tiptable th,.tiptable td{border:1px solid rgba(255,253,247,.22);padding:9px 12px;text-align:left}
+  .tiptable th{color:var(--yellow);font-weight:700}
+  .tiplist{margin:0;padding:0;list-style:none;font-size:15px;line-height:1.95}
+  .tiplist li::before{content:"◆";color:var(--yellow);margin-right:10px;font-size:12px}
+
   footer{margin-top:78px;border-top:2px solid var(--ink);padding:34px 0 60px;
     display:flex;gap:20px;flex-wrap:wrap;align-items:center;font-family:var(--mono);font-size:12.5px;color:var(--mut)}
   footer a{text-decoration:none;text-underline-offset:3px}
@@ -259,6 +274,7 @@
       <a href="#widget">Widgets</a>
       <a href="#features">Features</a>
       <a href="#screens">Screens</a>
+      <a href="#import">Import</a>
       <a href="#privacy">Privacy</a>
     </div>
     <!-- App Store link: replace href="#get" with the real URL once approved and drop the "coming soon" small. -->
@@ -490,6 +506,36 @@
         </div>
       </figure>
 
+    </div>
+  </section>
+
+  <!-- IMPORT -->
+  <section id="import" aria-labelledby="import-t">
+    <p class="slabel">import</p>
+    <h2 class="stitle" id="import-t">Already have a list? Bring it in.</h2>
+    <p class="sintro">Import a word list from CSV, Excel, or PDF. Every path lands in the same review screen —
+      map the columns, fix or drop rows, choose a deck. Nothing saves until you say so.</p>
+    <div class="steps">
+      <div class="step"><p class="n">step 1</p><h3>Pick a file</h3>
+        <p>CSV, TSV, Excel (.xlsx), or a text-based PDF — from Files, iCloud, anywhere.</p></div>
+      <div class="step"><p class="n">step 2</p><h3>Map the columns</h3>
+        <p>Point out which column is the word, the definition, and an example. A live preview shows the first rows.</p></div>
+      <div class="step"><p class="n">step 3</p><h3>Review &amp; import</h3>
+        <p>Edit, deselect, or swap any row and pick a deck. Nothing saves until you tap Import — and words you already have are held back.</p></div>
+    </div>
+    <div class="tip">
+      <p class="k">best excel setup</p>
+      <h3>Lay it out this way and it maps itself.</h3>
+      <table class="tiptable">
+        <thead><tr><th scope="col">A · Word</th><th scope="col">B · Definition</th><th scope="col">C · Example</th></tr></thead>
+        <tbody><tr><td>pellucid</td><td>translucently clear</td><td>“The lake was pellucid.”</td></tr></tbody>
+      </table>
+      <ul class="tiplist">
+        <li>One sheet — extra sheets add a “choose a sheet” step.</li>
+        <li>Column A the word, B the definition, C an example; A and B map automatically.</li>
+        <li>Put titles in the first row, then mark it as a header so they aren’t imported.</li>
+        <li>One word per row, plain text. Files up to 20&nbsp;MB.</li>
+      </ul>
     </div>
   </section>
 
